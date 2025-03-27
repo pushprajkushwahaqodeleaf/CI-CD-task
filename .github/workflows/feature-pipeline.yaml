@@ -59,6 +59,7 @@ jobs:
           git config --global user.name "pushprajkushwaha"
           git add values.yaml
           git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
-          echo "${GITHUB_REF#refs/heads}"
+          git branch
+          cat .git/HEAD
           git push origin task02
 
