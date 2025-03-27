@@ -54,16 +54,10 @@ jobs:
           
       - name: Commit and push the updated values.yaml
         run: |
-          - name: Commit and push the updated values.yaml
-  run: |
-    - name: Commit and push the updated values.yaml
-  run: |
-    git config --global user.email "pkushwaha@qodeleaf.com"
-    git config --global user.name "pushprajkushwahaqodeleaf"
-    BRANCH_NAME=${GITHUB_REF#refs/heads/}  
-    echo $BRANCH_NAME
-    git checkout $BRANCH_NAME  
-    git add values.yaml
-    git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
-    git push origin $BRANCH_NAME  
-
+          git config --global user.email "pkushwaha@qodeleaf.com"
+          git config --global user.name "pushprajkushwahaqodeleaf"
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}  
+          git checkout $BRANCH_NAME  
+          git add values.yaml
+          git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
+          git push origin $BRANCH_NAME  
