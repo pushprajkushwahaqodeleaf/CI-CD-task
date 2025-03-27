@@ -54,9 +54,8 @@ jobs:
           
       - name: Commit and push the updated values.yaml
         run: |
-          git config --global user.email "pushprajkushwaha@gmail.com"
-          git config --global user.name "pushprajkushwaha"
+          git config --global user.email "pkushwaha@qodeleaf.com"
+          git config --global user.name "pushprajkushwahaqodeleaf"
           git add values.yaml
           git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
           git push {$GITHUB_REF#refs/heads} HEAD:master
-
