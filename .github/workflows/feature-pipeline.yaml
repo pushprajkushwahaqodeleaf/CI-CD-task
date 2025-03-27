@@ -52,15 +52,25 @@ jobs:
       - name: Update helm values.yaml with new image tag
         run: |
           sed -i "s/tag: .*/tag: $NEW_TAG/" values.yaml
-          
+
       - name: Commit and push the updated values.yaml
+        if: github.event_name == 'push'
         run: |
           git config --global user.email "pushprajkushwaha@gmail.com"
           git config --global user.name "pushprajkushwaha"
           git add values.yaml
           git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
-          git branch
-          git branch -M task02
-          cat .git/HEAD
-          git push origin task02
+          git push origin ${GITHUB_REF#refs/heads}
 
+      - name: Commit and push the updated values.yaml to the PR branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git checkout ${{ github.head_ref }}
+          
+          git config --global user.email "pushprajkushwaha@gmail.com"
+          git config --global user.name "pushprajkushwaha"
+          
+          git add values.yaml
+          git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
+          
+          git push origin ${{ github.head_ref }}
