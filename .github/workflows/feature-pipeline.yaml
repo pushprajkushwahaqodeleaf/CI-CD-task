@@ -60,7 +60,7 @@ jobs:
           git add values.yaml
           git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
           git branch
-          git branch -M task01
+          git branch -M task02
           cat .git/HEAD
-          git push origin task01
+          git push origin task02
 
