@@ -8,7 +8,7 @@ deployment:
 
 image:
   name: itsmrhashtag/sharks-test
-  tag: 
+  tag: 20250328092624
   pullSecrets:
     - name: my-registry-secret
 
