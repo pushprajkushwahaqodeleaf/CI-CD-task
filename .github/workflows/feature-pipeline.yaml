@@ -46,5 +46,6 @@ jobs:
         run: |
           curl -X POST \
             -H "Authorization: token ${{ secrets.TOKEN }}" \
-            -d '{"ref": "refs/heads/master"}' \
+            -H "Content-Type: application/json" \
+            -d '{"ref": "refs/heads/master", "inputs": {"tag": "'${{ env.NEW_TAG }}'"}}' \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/update-values.yaml/dispatches
