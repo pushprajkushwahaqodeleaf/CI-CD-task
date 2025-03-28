@@ -1,17 +1,15 @@
 name: Docker Build
 
 on:
-  pull_request:
+  push:
     branches:
       - master
       - feature/**
-    types: [closed]
     paths:
       - Dockerfile
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true  # Only run if PR is merged
     runs-on: ubuntu-latest
     
     steps:
