@@ -1,0 +1,19 @@
+name: Update values.yaml with new Docker image tag
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-values:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update helm values.yaml with new image tag
+        run: |
+          NEW_TAG=${{ github.event.inputs.tag }}
+          sed -i "s/tag: .*/tag: $NEW_TAG/" values.yaml
+          git commit -am "Update values.yaml with new tag $NEW_TAG"
+          git push
