@@ -15,7 +15,7 @@ jobs:
         run: |
           NEW_TAG=${{ github.event.inputs.tag }}
           sed -i "s/tag: .*/tag: $NEW_TAG/" values.yaml
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+          git config --global user.email "pushprajkushwaha@qodeleaf.com"
+          git config --global user.name "pushprajkushwahaqodeleaf"
           git commit -am "Update values.yaml with new tag $NEW_TAG"
           git push
