@@ -1,16 +1,18 @@
-name: Docker Build and Helm Chart Update
+name: Docker Build
 
 on:
-  push:
+  pull_request:
     branches:
       - master
       - feature/**
+    types: [closed]
     paths:
       - Dockerfile
 
 jobs:
   build:
-    runs-on: ubuntu-latest  
+    if: github.event.pull_request.merged == true  # Only run if PR is merged
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
@@ -38,15 +40,16 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag sharks-test ${{ secrets.DOCKER_USERNAME }}/sharks-test:$NEW_TAG
+          docker tag sharks-test ${{ secrets.DOCKER_USERNAME }}/sharks-test:${{ env.NEW_TAG }}
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/sharks-test:$NEW_TAG
+          docker push ${{ secrets.DOCKER_USERNAME }}/sharks-test:${{ env.NEW_TAG }}
 
-      - name: Trigger workflow to update values.yaml with new image tag
+      - name: Dispatch Helm Update Workflow
         run: |
           curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"ref": "refs/heads/master"}' \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/update.yaml/dispatches
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{"event_type": "update", "client_payload": {"tag": "${{ env.NEW_TAG }}"}}'
