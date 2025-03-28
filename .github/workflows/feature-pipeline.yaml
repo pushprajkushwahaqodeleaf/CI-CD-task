@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - master
+      - feature/**
     paths:
-      - Dockerfile  
-  pull_request:
-    branches:
-      - master
-    paths:
-      - Dockerfile  
+      - Dockerfile
 
 jobs:
   build:
@@ -48,17 +44,9 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/sharks-test:$NEW_TAG
 
-      - name: Update helm values.yaml with new image tag
+      - name: Trigger workflow to update values.yaml with new image tag
         run: |
-          sed -i "s/tag: .*/tag: $NEW_TAG/" values.yaml
-          
-      - name: Commit and push the updated values.yaml
-        run: |
-          git config --global user.email "pkushwaha@qodeleaf.com"
-          git config --global user.name "pushprajkushwahaqodeleaf"
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}  
-          echo $BRANCH_NAME
-          git checkout master 
-          git add values.yaml
-          git commit -m "Update Docker image tag to $NEW_TAG in values.yaml"
-          git push origin master  
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"ref": "refs/heads/master"}' \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/update.yaml/dispatches
