@@ -1,19 +1,27 @@
-name: Update values.yaml with new Docker image tag
+name: Helm Chart Update
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
+    types: [update]
 
 jobs:
-  update-values:
+  update-helm:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update helm values.yaml with new image tag
         run: |
-          NEW_TAG=${{ github.event.inputs.tag }}
-          sed -i "s/tag: .*/tag: $NEW_TAG/" values.yaml
-          git commit -am "Update values.yaml with new tag $NEW_TAG"
+          sed -i "s/tag: .*/tag: ${{ github.event.client_payload.tag }}/" values.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add values.yaml
+          git commit -m "Update Helm values.yaml with new tag: ${{ github.event.client_payload.tag }}"
           git push
