@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-    paths:
-      - Dockerfile
+    
 
 jobs:
   build:
@@ -46,6 +45,6 @@ jobs:
       - name: Trigger workflow to update values.yaml with new image tag
         run: |
           curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.TOKEN }}" \
             -d '{"ref": "refs/heads/master"}' \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/update-values.yaml/dispatches
