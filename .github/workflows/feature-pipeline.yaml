@@ -1,4 +1,59 @@
-name: Docker Build
+# name: Docker Build
+
+# on:
+#   push:
+#     branches:
+#       - master
+#       - feature/**
+#     paths:
+#       - Dockerfile
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v2
+
+#       - name: Log in to Docker Hub
+#         uses: docker/login-action@v2
+#         with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
+
+#       - name: Build Docker image
+#         run: |
+#           docker build -t sharks-test .
+
+#       - name: Generate a new Docker tag
+#         id: tag
+#         run: |
+#           NEW_TAG=$(date +'%Y%m%d%H%M%S')
+#           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+#           echo "Generated new Docker image tag: $NEW_TAG"
+
+#       - name: Tag Docker image
+#         run: |
+#           docker tag sharks-test ${{ secrets.DOCKER_USERNAME }}/sharks-test:${{ env.NEW_TAG }}
+          
+#       - name: Push Docker image to Docker Hub
+#         run: |
+#           docker push ${{ secrets.DOCKER_USERNAME }}/sharks-test:${{ env.NEW_TAG }}
+
+#       - name: Dispatch Helm Update Workflow
+#         run: |
+#           curl -X POST \
+#             -H "Accept: application/vnd.github.v3+json" \
+#             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#             https://api.github.com/repos/${{ github.repository }}/dispatches \
+#             -d '{"event_type": "update", "client_payload": {"tag": "${{ env.NEW_TAG }}"}}'
+
+
+name: Docker Build and Helm Chart Update
 
 on:
   push:
@@ -10,7 +65,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  
     
     steps:
       - name: Checkout code
@@ -38,13 +93,13 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag sharks-test ${{ secrets.DOCKER_USERNAME }}/sharks-test:${{ env.NEW_TAG }}
+          docker tag sharks-test ${{ secrets.DOCKER_USERNAME }}/sharks-test:$NEW_TAG
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/sharks-test:${{ env.NEW_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/sharks-test:$NEW_TAG
 
-      - name: Dispatch Helm Update Workflow
+      - name: Trigger workflow to update values.yaml with new image tag
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
